@@ -111,7 +111,6 @@ lombok {
 
 sponge.plugin.meta.version = project.version
 
-
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.0.0'
     compile group: 'com.discordsrv', name: 'DiscordSRV-Core', version: dsrvVersion
