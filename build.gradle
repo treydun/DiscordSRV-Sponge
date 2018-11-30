@@ -1,0 +1,121 @@
+/*
+ * DiscordSRV-Sponge: Sponge platform support plugin or the DiscordSRV project
+ * Copyright (C) 2018 DiscordSRV
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'checkstyle'
+    id 'maven'
+    id 'org.spongepowered.plugin' version '0.8.1'
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+}
+
+def dsrvVersion = '2.0-RC1'
+
+group = 'com.discordsrv.sponge'
+version dsrvVersion
+
+defaultTasks 'clean', 'javadoc', 'check', 'build'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url = 'https://maven.discordsrv.com' }
+}
+
+configurations {
+    deployerJars
+}
+
+javadoc {
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author()
+    options.encoding = 'UTF-8'
+    options.addBooleanOption('html5', true)
+    options.addBooleanOption('Xdoclint:none', true)
+    failOnError = false
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+checkstyle {
+    configFile = rootProject.file('checkstyle.xml')
+}
+checkstyleMain {
+    source = sourceSets.main.allJava
+}
+checkstyleTest {
+    source = sourceSets.test.allJava
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = project.configurations.deployerJars
+        repository(url: System.env.mavenRepo) {
+            authentication(userName: System.env.mavenRepoUsername, password: System.env.mavenRepoPassword)
+        }
+    }
+    dependsOn check
+}
+
+test {
+    reports {
+        junitXml.enabled = false
+        html.enabled = true
+    }
+    ignoreFailures = true
+    subprojects.each { dependsOn('${it.path}:test') }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8.1'
+    //noinspection UnnecessaryQualifiedReference
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+lombok {
+    version = '1.18.2'
+    sha256 = ''
+}
+
+sponge.plugin.meta.version = project.version
+
+
+dependencies {
+    compileOnly 'org.spongepowered:spongeapi:7.0.0'
+    compile group: 'com.discordsrv', name: 'DiscordSRV-Core', version: dsrvVersion
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    testAnnotationProcessor project
+}
