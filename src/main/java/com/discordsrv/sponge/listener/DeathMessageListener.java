@@ -15,34 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.discordsrv.sponge.unit;
+package com.discordsrv.sponge.listener;
 
-import com.discordsrv.core.api.channel.ChatMessage;
-import com.discordsrv.core.api.common.unit.Named;
-import lombok.Value;
-import org.spongepowered.api.text.Text;
+import com.discordsrv.sponge.DSRVSponge;
+import lombok.AllArgsConstructor;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 
-import javax.annotation.Nullable;
-import java.util.function.Consumer;
+@AllArgsConstructor
+public class DeathMessageListener {
 
-@Value
-public class SpongeChatMessage implements ChatMessage {
+    private DSRVSponge plugin;
 
-    private Object source;
-    private Text message;
-
-    @Override
-    public Named getSender() {
-        return callback -> callback.accept(source.getClass().getName());
-    }
-
-    @Override
-    public String getMessage() {
-        return message.toPlain();
-    }
-
-    @Override
-    public void getUniqueIdentifier(@Nullable Consumer callback) {
-        //TODO
+    @Listener(order = Order.POST)
+    public void onDeath(DestructEntityEvent.Death event) {
+        if (!(event.getTargetEntity() instanceof Player)) {
+            return;
+        }
+        plugin.sendChatMessage(event, (Player) event.getTargetEntity());
     }
 }

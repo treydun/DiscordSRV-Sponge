@@ -15,22 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.discordsrv.sponge;
 
 import com.discordsrv.core.api.channel.ChatChannelLinker;
 import com.discordsrv.core.api.dsrv.Context;
 import com.discordsrv.core.api.role.TeamRoleLinker;
 import com.discordsrv.core.api.user.PlayerUserLinker;
-import com.discordsrv.core.api.user.PlayerUserLookup;
 import com.discordsrv.core.auth.PlayerUserAuthenticator;
-import com.discordsrv.core.channel.MalleableChatChannelLookup;
 import com.discordsrv.core.conf.Configuration;
-import com.discordsrv.core.role.MalleableTeamRoleLookup;
+import com.discordsrv.sponge.lookup.MessageChannelChatLookup;
+import com.discordsrv.sponge.lookup.SpongeChatChannelLookup;
+import com.discordsrv.sponge.lookup.SpongePlayerUserLookup;
+import com.discordsrv.sponge.lookup.SpongeTeamRoleLookup;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.dv8tion.jda.core.JDA;
 import org.spongepowered.api.Game;
@@ -40,18 +39,19 @@ import java.util.function.Consumer;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class SpongeContext implements Context {
 
+    private final DSRVSponge plugin;
     private Configuration configuration;
     private PlayerUserAuthenticator userAuthenticator;
     private PlayerUserLinker playerUserLinker;
-    private PlayerUserLookup playerUserLookup;
+    private SpongePlayerUserLookup playerUserLookup;
     private TeamRoleLinker teamRoleLinker;
-    private MalleableTeamRoleLookup<SpongeContext> teamRoleLookup;
+    private SpongeTeamRoleLookup teamRoleLookup;
     private ChatChannelLinker chatChannelLinker;
-    private MalleableChatChannelLookup<SpongeContext> chatChannelLookup;
+    private SpongeChatChannelLookup chatChannelLookup;
+    private MessageChannelChatLookup messageChannelChatLookup;
     private SpongeExecutorService spongeExecutorService;
     private Game game;
     private JDA jda;

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.discordsrv.sponge.lookup;
 
 import com.discordsrv.core.api.role.Team;
@@ -25,8 +24,10 @@ import com.discordsrv.sponge.SpongeContext;
 import com.google.common.util.concurrent.FutureCallback;
 import net.dv8tion.jda.core.entities.Role;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.stream.Stream;
 
+@ParametersAreNonnullByDefault
 public class SpongeTeamRoleLookup extends MalleableTeamRoleLookup<SpongeContext> {
 
     /**

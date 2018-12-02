@@ -15,34 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.discordsrv.sponge.unit;
+package com.discordsrv.sponge.unit.chat;
 
-import com.discordsrv.core.api.channel.ChatMessage;
-import com.discordsrv.core.api.common.unit.Named;
-import lombok.Value;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.channel.MessageChannel;
 
-import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
-@Value
-public class SpongeChatMessage implements ChatMessage {
+@ParametersAreNonnullByDefault
+public class SpongeGlobalChat extends SpongeChat {
 
-    private Object source;
-    private Text message;
-
-    @Override
-    public Named getSender() {
-        return callback -> callback.accept(source.getClass().getName());
+    public SpongeGlobalChat(final MessageChannel messageChannel) {
+        super(messageChannel);
     }
 
     @Override
-    public String getMessage() {
-        return message.toPlain();
+    public void getName(Consumer<CharSequence> callback) {
+        callback.accept("Global");
     }
 
     @Override
-    public void getUniqueIdentifier(@Nullable Consumer callback) {
-        //TODO
+    public void getUniqueIdentifier(Consumer<String> callback) {
+        callback.accept("global");
     }
 }

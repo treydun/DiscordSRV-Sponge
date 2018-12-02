@@ -39,6 +39,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven { url = 'https://maven.discordsrv.com' }
+    maven { url = 'https://jitpack.io' }
 }
 
 configurations {
@@ -112,9 +113,12 @@ lombok {
 sponge.plugin.meta.version = project.version
 
 dependencies {
+    compileOnly 'org.spongepowered:plugin-meta:0.4.1'
     compileOnly 'org.spongepowered:spongeapi:7.0.0'
+    compileOnly 'com.github.SpongePowered:SpongeAPI:v6.0.0:shaded'
+
     compile group: 'com.discordsrv', name: 'DiscordSRV-Core', version: dsrvVersion
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-    testAnnotationProcessor project
+    //testAnnotationProcessor project
 }
