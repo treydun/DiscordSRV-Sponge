@@ -42,9 +42,11 @@ public class SpongeTeamRoleLookup extends MalleableTeamRoleLookup<SpongeContext>
 
     @Override
     public void getKnownTeams(FutureCallback<Stream<Team<MinecraftPlayer>>> callback) {
+        // TODO
     }
 
     @Override
     public void getKnownRoles(FutureCallback<Stream<Role>> callback) {
+        // TODO
     }
 }

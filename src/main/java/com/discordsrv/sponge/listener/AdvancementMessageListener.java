@@ -30,6 +30,6 @@ public class AdvancementMessageListener {
 
     @Listener(order = Order.POST)
     public void onAdvancement(AdvancementEvent.Grant event) {
-        plugin.sendChatMessage(event, event.getTargetEntity());
+        plugin.sendMessage(event, event.getTargetEntity());
     }
 }

@@ -39,10 +39,8 @@ import java.util.function.Consumer;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@RequiredArgsConstructor
 public class SpongeContext implements Context {
 
-    private final DSRVSponge plugin;
     private Configuration configuration;
     private PlayerUserAuthenticator userAuthenticator;
     private PlayerUserLinker playerUserLinker;

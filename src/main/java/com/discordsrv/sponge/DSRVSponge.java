@@ -27,6 +27,7 @@ import com.discordsrv.core.discord.DSRVJDABuilder;
 import com.discordsrv.core.role.LocalTeamRoleLinker;
 import com.discordsrv.core.user.LocalPlayerUserLinker;
 import com.discordsrv.core.user.UplinkedPlayerUserLinker;
+import com.discordsrv.sponge.listener.ChannelMessageListener;
 import com.discordsrv.sponge.listener.ChatMessageListener;
 import com.discordsrv.sponge.listener.DeathMessageListener;
 import com.discordsrv.sponge.lookup.MessageChannelChatLookup;
@@ -63,7 +64,7 @@ import java.util.Optional;
 @Plugin(id = "discordsrv", name = "DiscordSRV", description = "empty")
 public class DSRVSponge implements Platform<SpongeContext> {
 
-    @Getter private final SpongeContext context = new SpongeContext(this);
+    @Getter private final SpongeContext context = new SpongeContext();
 
     @Configured
     public DSRVSponge(final @Val("remote-linker") boolean remoteLinker) {
@@ -104,6 +105,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
 
     @Listener
     public void onGameInitialization(GameInitializationEvent event) {
+        Sponge.getEventManager().registerListeners(this, new ChannelMessageListener(this));
         Sponge.getEventManager().registerListeners(this, new ChatMessageListener(this));
         Sponge.getEventManager().registerListeners(this, new DeathMessageListener(this));
         try {
@@ -116,7 +118,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
         }
     }
 
-    public void sendChatMessage(MessageChannelEvent event, Player player) {
+    public void sendMessage(MessageChannelEvent event, @Nullable Player player) {
         Optional<MessageChannel> messageChannel = event.getChannel();
         if (!messageChannel.isPresent()) {
             return;
@@ -129,7 +131,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
                     return;
                 }
 
-                sendChatMessage(result, player);
+                sendMessage(result, player);
             }
 
             @Override
@@ -138,7 +140,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
         });
     }
 
-    public void sendChatMessage(SpongeChat spongeChat, Player player) {
+    public void sendMessage(SpongeChat spongeChat, @Nullable Player player) {
         context.getChatChannelLinker().translate(spongeChat, new FutureCallback<TextChannel>() {
             @Override
             public void onSuccess(@Nullable final TextChannel result) {
@@ -146,7 +148,8 @@ public class DSRVSponge implements Platform<SpongeContext> {
                     return;
                 }
 
-                result.sendMessage(player.getName()).queue();
+                if (player != null)
+                    result.sendMessage(player.getName()).queue();
             }
 
             @Override

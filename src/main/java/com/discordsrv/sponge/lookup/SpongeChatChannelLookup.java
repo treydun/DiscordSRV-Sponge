@@ -41,9 +41,11 @@ public class SpongeChatChannelLookup extends MalleableChatChannelLookup<SpongeCo
 
     @Override
     public void getKnownChats(FutureCallback<Stream<Chat>> callback) {
+        // TODO
     }
 
     @Override
     public void getKnownChannels(FutureCallback<Stream<Channel>> callback) {
+        // TODO
     }
 }

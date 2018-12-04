@@ -32,6 +32,6 @@ public class AchievementMessageListener {
 
     @Listener(order = Order.POST)
     public void onAchievement(GrantAchievementEvent.TargetPlayer event, @Root Player player) {
-        plugin.sendChatMessage(event, player);
+        plugin.sendMessage(event, player);
     }
 }

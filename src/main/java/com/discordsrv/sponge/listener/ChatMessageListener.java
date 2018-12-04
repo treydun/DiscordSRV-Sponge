@@ -23,6 +23,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class ChatMessageListener {
     private DSRVSponge plugin;
 
     @Listener(order = Order.POST)
-    public void onMessage(MessageChannelEvent.Chat event, @First Player player) {
-        plugin.sendChatMessage(event, player);
+    public void onMessage(MessageChannelEvent.Chat event, @Root Player player) {
+        plugin.sendMessage(event, player);
     }
 }

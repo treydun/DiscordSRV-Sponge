@@ -15,37 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.discordsrv.sponge.unit;
 
-import com.discordsrv.core.api.channel.ChatMessage;
-import com.discordsrv.core.api.common.unit.Named;
-import lombok.Value;
-import org.spongepowered.api.text.Text;
+package com.discordsrv.sponge.listener;
 
-import javax.annotation.Nullable;
-import java.util.function.Consumer;
+import com.discordsrv.sponge.DSRVSponge;
+import lombok.AllArgsConstructor;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.message.MessageChannelEvent;
 
-/**
- * TODO: ChatMessage type
- */
-@Value
-public class SpongeChatMessage implements ChatMessage {
+@AllArgsConstructor
+public class ChannelMessageListener {
 
-    private Object source;
-    private Text message;
+    private DSRVSponge plugin;
 
-    @Override
-    public Named getSender() {
-        return callback -> callback.accept(source.getClass().getName());
-    }
+    @Listener(order = Order.POST)
+    public void onMessage(MessageChannelEvent event) {
+        if (event instanceof MessageChannelEvent.Chat && event.getCause().root() instanceof Player)
+            return;
+        else if (event.getCause().contains(DSRVSponge.class))
+            return;
 
-    @Override
-    public String getMessage() {
-        return message.toPlain();
-    }
-
-    @Override
-    public void getUniqueIdentifier(@Nullable Consumer callback) {
-        //TODO
+        plugin.sendMessage(event, null);
     }
 }

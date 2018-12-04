@@ -34,6 +34,6 @@ public class DeathMessageListener {
         if (!(event.getTargetEntity() instanceof Player)) {
             return;
         }
-        plugin.sendChatMessage(event, (Player) event.getTargetEntity());
+        plugin.sendMessage(event, (Player) event.getTargetEntity());
     }
 }

@@ -41,5 +41,4 @@ public class MessageChannelChatLookup {
     public void addTranslator(Translator<MessageChannel, SpongeChat> translator) {
         this.chatTranslators.add(translator);
     }
-
 }
