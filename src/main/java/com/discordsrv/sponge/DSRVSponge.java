@@ -69,16 +69,19 @@ public class DSRVSponge implements Platform<SpongeContext> {
     @Configured
     public DSRVSponge(final @Val("remote-linker") boolean remoteLinker) {
         try {
+            SpongeTeamRoleLookup teamRoleLookup = new SpongeTeamRoleLookup(context);
+            SpongeChatChannelLookup chatChannelLookup = new SpongeChatChannelLookup(context);
+            SpongePlayerUserLookup playerUserLookup = new SpongePlayerUserLookup(context);
             context.setJda(context.getConfiguration().create(DSRVJDABuilder.class).build());
+            context.setTeamRoleLookup(teamRoleLookup);
+            context.setChatChannelLookup(chatChannelLookup);
+            context.setPlayerUserLookup(playerUserLookup);
             context.setUserAuthenticator(context.getConfiguration().create(PlayerUserAuthenticator.class));
-            context.setPlayerUserLinker(remoteLinker ? context.getConfiguration().create(UplinkedPlayerUserLinker.class)
-                : context.getConfiguration().create(LocalPlayerUserLinker.class));
-            context.setTeamRoleLinker(context.getConfiguration().create(LocalTeamRoleLinker.class));
-            context.setChatChannelLinker(
-                context.getConfiguration().create(LocalChatChannelLinker.class, new SpongeConsole(context)));
-            context.setTeamRoleLookup(new SpongeTeamRoleLookup(context));
-            context.setChatChannelLookup(new SpongeChatChannelLookup(context));
-            context.setPlayerUserLookup(new SpongePlayerUserLookup(context));
+            context.setPlayerUserLinker(remoteLinker ? new UplinkedPlayerUserLinker(context.getPlayerUserLookup())
+                : context.getConfiguration().create(LocalPlayerUserLinker.class, playerUserLookup));
+            context.setTeamRoleLinker(context.getConfiguration().create(LocalTeamRoleLinker.class, teamRoleLookup));
+            context.setChatChannelLinker(context.getConfiguration()
+                .create(LocalChatChannelLinker.class, new SpongeConsole(context), chatChannelLookup));
             context.setMessageChannelChatLookup(new MessageChannelChatLookup());
             context.setSpongeExecutorService(Sponge.getScheduler().createSyncExecutor(this));
             context.setGame(Sponge.getGame());
@@ -123,14 +126,12 @@ public class DSRVSponge implements Platform<SpongeContext> {
         if (!messageChannel.isPresent()) {
             return;
         }
-
         context.getMessageChannelChatLookup().lookup(messageChannel.get(), new FutureCallback<SpongeChat>() {
             @Override
             public void onSuccess(@Nullable final SpongeChat result) {
                 if (result == null) {
                     return;
                 }
-
                 sendMessage(result, player);
             }
 
@@ -147,9 +148,9 @@ public class DSRVSponge implements Platform<SpongeContext> {
                 if (result == null) {
                     return;
                 }
-
-                if (player != null)
+                if (player != null) {
                     result.sendMessage(player.getName()).queue();
+                }
             }
 
             @Override

@@ -29,7 +29,6 @@ import com.discordsrv.sponge.lookup.SpongePlayerUserLookup;
 import com.discordsrv.sponge.lookup.SpongeTeamRoleLookup;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.dv8tion.jda.core.JDA;
 import org.spongepowered.api.Game;

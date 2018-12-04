@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.discordsrv.sponge.listener;
 
 import com.discordsrv.sponge.DSRVSponge;
@@ -32,11 +31,11 @@ public class ChannelMessageListener {
 
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent event) {
-        if (event instanceof MessageChannelEvent.Chat && event.getCause().root() instanceof Player)
+        if (event instanceof MessageChannelEvent.Chat && event.getCause().root() instanceof Player) {
             return;
-        else if (event.getCause().contains(DSRVSponge.class))
+        } else if (event.getCause().contains(DSRVSponge.class)) {
             return;
-
+        }
         plugin.sendMessage(event, null);
     }
 }
