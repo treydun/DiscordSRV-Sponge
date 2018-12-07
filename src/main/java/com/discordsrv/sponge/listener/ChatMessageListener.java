@@ -25,11 +25,19 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 
+/**
+ * Chat message listener.
+ */
 @AllArgsConstructor
 public class ChatMessageListener {
 
     private DSRVSponge plugin;
 
+    /**
+     * MessageChannelEvent.Chat listener caused by a player.
+     * @param event MessageChannelEvent.Chat
+     * @param player Player
+     */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent.Chat event, @Root Player player) {
         plugin.sendMessage(event, player);

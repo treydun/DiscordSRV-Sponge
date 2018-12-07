@@ -23,11 +23,16 @@ import com.discordsrv.sponge.unit.chat.SpongeChat;
 import com.google.common.util.concurrent.FutureCallback;
 import org.spongepowered.api.text.channel.MessageChannel;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * MessageChannelChatLookup type, for making dynamic lookups.
+ */
+@ParametersAreNonnullByDefault
 public class MessageChannelChatLookup {
 
     private final Set<Translator<MessageChannel, SpongeChat>> chatTranslators = new CopyOnWriteArraySet<>();
@@ -38,6 +43,12 @@ public class MessageChannelChatLookup {
                 .translate(messageChannel, internal)).collect(Collectors.toList()), callback).run();
     }
 
+    /**
+     * Adds a translator to this lookup.
+     *
+     * @param translator
+     *         The translator to invoke for getting a SpongeChat object.
+     */
     public void addTranslator(Translator<MessageChannel, SpongeChat> translator) {
         this.chatTranslators.add(translator);
     }

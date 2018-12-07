@@ -27,6 +27,9 @@ import net.dv8tion.jda.core.entities.Role;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.stream.Stream;
 
+/**
+ * MalleableTeamRoleLookup implementation, for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
 public class SpongeTeamRoleLookup extends MalleableTeamRoleLookup<SpongeContext> {
 
@@ -40,13 +43,29 @@ public class SpongeTeamRoleLookup extends MalleableTeamRoleLookup<SpongeContext>
         super(context);
     }
 
+    /**
+     * Fetches all the teams which this lookup can find.
+     *
+     * @param callback
+     *         The callback to invoke when collected.
+     */
     @Override
     public void getKnownTeams(FutureCallback<Stream<Team<MinecraftPlayer>>> callback) {
         // TODO
     }
 
+    /**
+     * Fetches all the roles which this lookup can find.
+     *
+     * @param callback
+     *         The callback to invoke when collected.
+     */
     @Override
     public void getKnownRoles(FutureCallback<Stream<Role>> callback) {
-        // TODO
+        try {
+            callback.onSuccess(getContext().getJda().getRoles().stream());
+        } catch (Throwable throwable) {
+            callback.onFailure(throwable);
+        }
     }
 }

@@ -23,11 +23,18 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.advancement.AdvancementEvent;
 
+/**
+ * Advancement message listener.
+ */
 @AllArgsConstructor
 public class AdvancementMessageListener {
 
     private DSRVSponge plugin;
 
+    /**
+     * AdvancementEvent.Grant listener.
+     * @param event AdvancementEvent.Grant
+     */
     @Listener(order = Order.POST)
     public void onAdvancement(AdvancementEvent.Grant event) {
         plugin.sendMessage(event, event.getTargetEntity());

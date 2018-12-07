@@ -36,6 +36,9 @@ import org.spongepowered.api.scheduler.SpongeExecutorService;
 
 import java.util.function.Consumer;
 
+/**
+ * SpongeContext type, to provide the context for extensions.
+ */
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpongeContext implements Context {

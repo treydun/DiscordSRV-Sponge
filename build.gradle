@@ -29,6 +29,7 @@ def dsrvVersion = '2.0-RC1'
 
 group = 'com.discordsrv.sponge'
 version dsrvVersion
+sponge.plugin.meta.version = project.version
 
 defaultTasks 'clean', 'javadoc', 'check', 'build'
 
@@ -109,8 +110,6 @@ lombok {
     version = '1.18.2'
     sha256 = ''
 }
-
-sponge.plugin.meta.version = project.version
 
 dependencies {
     compileOnly 'org.spongepowered:plugin-meta:0.4.1'

@@ -27,6 +27,9 @@ import net.dv8tion.jda.core.entities.User;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.stream.Stream;
 
+/**
+ * MalleablePlayerUserLookup implementation, for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
 public class SpongePlayerUserLookup extends MalleablePlayerUserLookup<SpongeContext> {
 
@@ -40,6 +43,12 @@ public class SpongePlayerUserLookup extends MalleablePlayerUserLookup<SpongeCont
         super(context);
     }
 
+    /**
+     * Fetches all online Minecraft players.
+     *
+     * @param callback
+     *         The callback to invoke when users have been collected.
+     */
     @Override
     public void getOnlinePlayers(FutureCallback<Stream<MinecraftPlayer>> callback) {
         try {
@@ -50,6 +59,12 @@ public class SpongePlayerUserLookup extends MalleablePlayerUserLookup<SpongeCont
         }
     }
 
+    /**
+     * Fetches all online Discord users from the known guilds.
+     *
+     * @param callback
+     *         The callback to invoke when users have been collected.
+     */
     @Override
     public void getOnlineUsers(FutureCallback<Stream<User>> callback) {
         try {

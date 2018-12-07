@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
- * TODO: ChatMessage type
+ * ChatMessage implementation, for DiscordSRV-Sponge.
  */
 @Value
 public class SpongeChatMessage implements ChatMessage {
@@ -34,16 +34,32 @@ public class SpongeChatMessage implements ChatMessage {
     private Object source;
     private Text message;
 
+    /**
+     * Gets the sender of this message.
+     *
+     * @return sender The sender of this message.
+     */
     @Override
     public Named getSender() {
         return callback -> callback.accept(source.getClass().getName());
     }
 
+    /**
+     * Gets the message to be sent to the Minecraft chat.
+     *
+     * @return message The message to be sent.
+     */
     @Override
     public String getMessage() {
         return message.toPlain();
     }
 
+    /**
+     * Fetches the identifier for this uniquely identifiable type.
+     *
+     * @param callback
+     *         The callback of this comparison.
+     */
     @Override
     public void getUniqueIdentifier(@Nullable Consumer callback) {
         //TODO

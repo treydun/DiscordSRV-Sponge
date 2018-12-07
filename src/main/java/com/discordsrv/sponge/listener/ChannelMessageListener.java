@@ -24,11 +24,18 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 
+/**
+ * Channel message listener.
+ */
 @AllArgsConstructor
 public class ChannelMessageListener {
 
     private DSRVSponge plugin;
 
+    /**
+     * MessageChannelEvent listener for non-chat messages.
+     * @param event MessageChannelEvent
+     */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent event) {
         if (event instanceof MessageChannelEvent.Chat && event.getCause().root() instanceof Player) {

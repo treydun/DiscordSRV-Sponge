@@ -26,6 +26,9 @@ import net.dv8tion.jda.core.entities.Channel;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.stream.Stream;
 
+/**
+ * MalleableChatChannelLookup implementation, for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
 public class SpongeChatChannelLookup extends MalleableChatChannelLookup<SpongeContext> {
 
@@ -39,11 +42,23 @@ public class SpongeChatChannelLookup extends MalleableChatChannelLookup<SpongeCo
         super(context);
     }
 
+    /**
+     * Fetches all the chats which this lookup can find.
+     *
+     * @param callback
+     *         The callback to invoke when collected.
+     */
     @Override
     public void getKnownChats(FutureCallback<Stream<Chat>> callback) {
         // TODO
     }
 
+    /**
+     * Fetches all the channels which this lookup can find.
+     *
+     * @param callback
+     *         The callback to invoke when collected.
+     */
     @Override
     public void getKnownChannels(FutureCallback<Stream<Channel>> callback) {
         // TODO

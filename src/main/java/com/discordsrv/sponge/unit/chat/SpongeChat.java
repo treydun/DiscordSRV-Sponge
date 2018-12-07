@@ -26,12 +26,25 @@ import org.spongepowered.api.text.channel.MessageChannel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+/**
+ * Chat implementation, for representing Minecraft chats for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
 @AllArgsConstructor
 public abstract class SpongeChat implements Chat {
 
     private final MessageChannel messageChannel;
 
+    /**
+     * Sends a message to this instance. If the message could not be completed, the {@link
+     * FutureCallback#onFailure(Throwable)} method will be invoked. Otherwise, a result will be sent to {@link
+     * FutureCallback#onSuccess(Object)} which is appropriate for this message (possibly null).
+     *
+     * @param message
+     *         The message which needs to be sent.
+     * @param resultCallback
+     *         The callback for this method.
+     */
     @Override
     public void sendMessage(ChatMessage<Long> message, FutureCallback<Void> resultCallback) {
         try {

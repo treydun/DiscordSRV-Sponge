@@ -27,12 +27,25 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+/**
+ * MinecraftPlayer implementation, for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
 @Value
 public class SpongeMinecraftPlayer implements MinecraftPlayer {
 
     public final Player player;
 
+    /**
+     * Sends a message to this instance. If the message could not be completed, the {@link
+     * FutureCallback#onFailure(Throwable)} method will be invoked. Otherwise, a result will be sent to {@link
+     * FutureCallback#onSuccess(Object)} which is appropriate for this message (possibly null).
+     *
+     * @param message
+     *         The message which needs to be sent.
+     * @param resultCallback
+     *         The callback for this method.
+     */
     @Override
     public void sendMessage(String message, FutureCallback<Void> resultCallback) {
         try {
@@ -43,11 +56,23 @@ public class SpongeMinecraftPlayer implements MinecraftPlayer {
         }
     }
 
+    /**
+     * Fetches the name of this named instance.
+     *
+     * @param callback
+     *         The callback for this getter.
+     */
     @Override
     public void getName(Consumer<CharSequence> callback) {
         callback.accept(player.getName());
     }
 
+    /**
+     * Fetches the identifier for this uniquely identifiable type.
+     *
+     * @param callback
+     *         The callback of this comparison.
+     */
     @Override
     public void getUniqueIdentifier(Consumer<UUID> callback) {
         callback.accept(player.getUniqueId());

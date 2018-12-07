@@ -15,28 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.discordsrv.sponge.unit;
-
-import com.discordsrv.core.api.minecraft.Console;
-import com.discordsrv.sponge.SpongeContext;
-import lombok.Value;
-
 /**
- * Console implementation, for DiscordSRV-Sponge.
+ * Lookup package for DiscordSRV-Sponge.
  */
-@Value
-public class SpongeConsole implements Console {
-
-    private final SpongeContext context;
-
-    /**
-     * Invokes a string command onto the console.
-     *
-     * @param cmd
-     *         The command to invoke.
-     */
-    @Override
-    public void invoke(String cmd) {
-        context.getGame().getCommandManager().process(context.getGame().getServer().getConsole(), cmd);
-    }
-}
+package com.discordsrv.sponge.lookup;

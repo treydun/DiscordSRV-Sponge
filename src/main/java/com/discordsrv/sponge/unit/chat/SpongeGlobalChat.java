@@ -29,11 +29,23 @@ public class SpongeGlobalChat extends SpongeChat {
         super(messageChannel);
     }
 
+    /**
+     * Fetches the name of this named instance.
+     *
+     * @param callback
+     *         The callback for this getter.
+     */
     @Override
     public void getName(Consumer<CharSequence> callback) {
         callback.accept("Global");
     }
 
+    /**
+     * Fetches the identifier for this uniquely identifiable type.
+     *
+     * @param callback
+     *         The callback of this comparison.
+     */
     @Override
     public void getUniqueIdentifier(Consumer<String> callback) {
         callback.accept("global");

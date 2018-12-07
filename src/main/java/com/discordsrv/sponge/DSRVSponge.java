@@ -39,6 +39,7 @@ import com.discordsrv.sponge.unit.chat.SpongeChat;
 import com.discordsrv.sponge.unit.chat.SpongeGlobalChat;
 import com.google.common.util.concurrent.FutureCallback;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.collections4.bidimap.DualTreeBidiMap;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -60,12 +61,21 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
+/**
+ * Main plugin class for DiscordSRV-Sponge.
+ */
 @ParametersAreNonnullByDefault
+@NoArgsConstructor
 @Plugin(id = "discordsrv", name = "DiscordSRV", description = "empty")
 public class DSRVSponge implements Platform<SpongeContext> {
 
     @Getter private final SpongeContext context = new SpongeContext();
 
+    /**
+     * Configured constructor for the Sponge implementation of DiscordSRV.
+     *
+     * @param remoteLinker Whether or not remote linking should be used
+     */
     @Configured
     public DSRVSponge(final @Val("remote-linker") boolean remoteLinker) {
         try {
@@ -90,6 +100,11 @@ public class DSRVSponge implements Platform<SpongeContext> {
         }
     }
 
+    /**
+     * GamePreInitializationEvent listener.
+     *
+     * @param event GamePreInitializationEvent
+     */
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
         try {
@@ -106,6 +121,11 @@ public class DSRVSponge implements Platform<SpongeContext> {
         });
     }
 
+    /**
+     * GameInitializationEvent listener.
+     *
+     * @param event GameInitializationEvent
+     */
     @Listener
     public void onGameInitialization(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new ChannelMessageListener(this));
@@ -121,6 +141,12 @@ public class DSRVSponge implements Platform<SpongeContext> {
         }
     }
 
+    /**
+     * Sends a message based on the MessageChannelEvent.
+     *
+     * @param event MessageChannelEvent
+     * @param player the Player that sent the message
+     */
     public void sendMessage(MessageChannelEvent event, @Nullable Player player) {
         Optional<MessageChannel> messageChannel = event.getChannel();
         if (!messageChannel.isPresent()) {
@@ -141,6 +167,12 @@ public class DSRVSponge implements Platform<SpongeContext> {
         });
     }
 
+    /**
+     * TODO send message with formatting & stuff.
+     *
+     * @param spongeChat SpongeChat that the message came from
+     * @param player the Player that send the message
+     */
     public void sendMessage(SpongeChat spongeChat, @Nullable Player player) {
         context.getChatChannelLinker().translate(spongeChat, new FutureCallback<TextChannel>() {
             @Override

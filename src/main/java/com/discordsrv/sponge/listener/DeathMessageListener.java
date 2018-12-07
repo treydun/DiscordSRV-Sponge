@@ -24,11 +24,18 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 
+/**
+ * Death message listener.
+ */
 @AllArgsConstructor
 public class DeathMessageListener {
 
     private DSRVSponge plugin;
 
+    /**
+     * DestructEntityEvent.Death listener.
+     * @param event DestructEntityEvent.Death
+     */
     @Listener(order = Order.POST)
     public void onDeath(DestructEntityEvent.Death event) {
         if (!(event.getTargetEntity() instanceof Player)) {

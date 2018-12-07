@@ -25,11 +25,19 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.achievement.GrantAchievementEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 
+/**
+ * Achievement message listener.
+ */
 @AllArgsConstructor
 public class AchievementMessageListener {
 
     private DSRVSponge plugin;
 
+    /**
+     * GrantAchievementEvent.TargetPlayer listener caused by a Player.
+     * @param event GrantAchievementEvent.TargetPlayer
+     * @param player Player
+     */
     @Listener(order = Order.POST)
     public void onAchievement(GrantAchievementEvent.TargetPlayer event, @Root Player player) {
         plugin.sendMessage(event, player);
