@@ -29,6 +29,8 @@ def dsrvVersion = '2.0-RC1'
 
 group = 'com.discordsrv.sponge'
 version dsrvVersion
+
+sponge.plugin.id = 'discordsrv'
 sponge.plugin.meta.version = project.version
 
 defaultTasks 'clean', 'javadoc', 'check', 'build'
