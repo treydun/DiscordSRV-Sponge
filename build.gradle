@@ -123,3 +123,11 @@ dependencies {
     testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     //testAnnotationProcessor project
 }
+
+jar {
+    exclude('module-info.class')
+
+    from configurations.compile.collect {
+        it.getName().endsWith('.jar') ? zipTree(it) : it
+    }
+}

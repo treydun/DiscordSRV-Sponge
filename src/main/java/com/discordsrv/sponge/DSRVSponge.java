@@ -41,8 +41,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.apache.commons.collections4.bidimap.DualTreeBidiMap;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -50,10 +48,12 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.naming.ConfigurationException;
 import javax.security.auth.login.LoginException;
@@ -77,24 +77,28 @@ public class DSRVSponge implements Platform<SpongeContext> {
      * @param remoteLinker Whether or not remote linking should be used
      */
     @Configured
-    public DSRVSponge(final @Val("remote-linker") boolean remoteLinker) {
+    public DSRVSponge(
+        final @Val("remote-linker") Boolean remoteLinker,
+        final @Val("executor") SpongeExecutorService spongeExecutorService
+    ) {
         try {
             SpongeTeamRoleLookup teamRoleLookup = new SpongeTeamRoleLookup(context);
             SpongeChatChannelLookup chatChannelLookup = new SpongeChatChannelLookup(context);
             SpongePlayerUserLookup playerUserLookup = new SpongePlayerUserLookup(context);
-            context.setJda(context.getConfiguration().create(DSRVJDABuilder.class).build());
             context.setTeamRoleLookup(teamRoleLookup);
             context.setChatChannelLookup(chatChannelLookup);
             context.setPlayerUserLookup(playerUserLookup);
-            context.setUserAuthenticator(context.getConfiguration().create(PlayerUserAuthenticator.class));
+            context.setUserAuthenticator(
+                context.getConfiguration().create(PlayerUserAuthenticator.class, spongeExecutorService));
             context.setPlayerUserLinker(remoteLinker ? new UplinkedPlayerUserLinker(context.getPlayerUserLookup())
                 : context.getConfiguration().create(LocalPlayerUserLinker.class, playerUserLookup));
             context.setTeamRoleLinker(context.getConfiguration().create(LocalTeamRoleLinker.class, teamRoleLookup));
             context.setChatChannelLinker(context.getConfiguration()
                 .create(LocalChatChannelLinker.class, new SpongeConsole(context), chatChannelLookup));
             context.setMessageChannelChatLookup(new MessageChannelChatLookup());
-            context.setSpongeExecutorService(Sponge.getScheduler().createSyncExecutor(this));
+            context.setSpongeExecutorService(spongeExecutorService);
             context.setGame(Sponge.getGame());
+            context.setJda(context.getConfiguration().create(DSRVJDABuilder.class).build());
         } catch (ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException | LoginException e) {
             e.printStackTrace();
         }
@@ -109,7 +113,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     public void onGamePreInitialization(GamePreInitializationEvent event) {
         try {
             Configuration configuration = Configuration.getStandardConfiguration(new Yaml());
-            configuration.create(DSRVSponge.class, new DualTreeBidiMap<String, String>());
+            configuration.create(DSRVSponge.class, Sponge.getScheduler().createSyncExecutor(this));
             context.setConfiguration(configuration);
         } catch (IOException | ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             e.printStackTrace();
