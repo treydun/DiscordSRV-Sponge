@@ -34,13 +34,14 @@ public class DeathMessageListener {
 
     /**
      * DestructEntityEvent.Death listener.
-     * @param event DestructEntityEvent.Death
+     *
+     * @param event
+     *         DestructEntityEvent.Death
      */
     @Listener(order = Order.POST)
     public void onDeath(DestructEntityEvent.Death event) {
-        if (!(event.getTargetEntity() instanceof Player)) {
-            return;
+        if (event.getTargetEntity() instanceof Player) {
+            plugin.sendMessage(event, (Player) event.getTargetEntity());
         }
-        plugin.sendMessage(event, (Player) event.getTargetEntity());
     }
 }

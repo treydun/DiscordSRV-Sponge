@@ -34,7 +34,9 @@ public class ChannelMessageListener {
 
     /**
      * MessageChannelEvent listener for non-chat messages.
-     * @param event MessageChannelEvent
+     *
+     * @param event
+     *         MessageChannelEvent
      */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent event) {
@@ -43,6 +45,7 @@ public class ChannelMessageListener {
         } else if (event.getCause().contains(DSRVSponge.class)) {
             return;
         }
+        System.out.println(event.getFormatter().toText().toPlain());
         plugin.sendMessage(event, null);
     }
 }

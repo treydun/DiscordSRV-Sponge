@@ -33,7 +33,9 @@ public class AdvancementMessageListener {
 
     /**
      * AdvancementEvent.Grant listener.
-     * @param event AdvancementEvent.Grant
+     *
+     * @param event
+     *         AdvancementEvent.Grant
      */
     @Listener(order = Order.POST)
     public void onAdvancement(AdvancementEvent.Grant event) {

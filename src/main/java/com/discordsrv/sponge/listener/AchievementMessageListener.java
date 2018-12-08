@@ -35,8 +35,11 @@ public class AchievementMessageListener {
 
     /**
      * GrantAchievementEvent.TargetPlayer listener caused by a Player.
-     * @param event GrantAchievementEvent.TargetPlayer
-     * @param player Player
+     *
+     * @param event
+     *         GrantAchievementEvent.TargetPlayer
+     * @param player
+     *         Player
      */
     @Listener(order = Order.POST)
     public void onAchievement(GrantAchievementEvent.TargetPlayer event, @Root Player player) {

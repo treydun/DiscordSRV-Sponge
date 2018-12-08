@@ -35,8 +35,11 @@ public class ChatMessageListener {
 
     /**
      * MessageChannelEvent.Chat listener caused by a player.
-     * @param event MessageChannelEvent.Chat
-     * @param player Player
+     *
+     * @param event
+     *         MessageChannelEvent.Chat
+     * @param player
+     *         Player
      */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent.Chat event, @Root Player player) {
