@@ -1,7 +1,7 @@
 bot:
     # Bot token; Never share this with anyone
     # Don't know where to find this? Please see the Installation instructions on the plugin page
-    token: "OMITTED"
+    token: "token"
     # The bot's prefix for running commands on Discord
     # Example: "!"
     prefix: ">"
@@ -23,6 +23,10 @@ channels:
 plugin:
     # Should BungeeCord be used for account linking
     use_remote_linking: false
+
+generic-message-listener:
+    # Whether or not generic channel messages (/me, /say etc.) should be enabled
+    enabled: false
 
 # Enables the debugger; Don't touch this unless you need to
 debug: false

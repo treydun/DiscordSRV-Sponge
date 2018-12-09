@@ -18,31 +18,17 @@
 package com.discordsrv.sponge;
 
 import com.discordsrv.core.api.dsrv.platform.Platform;
-import com.discordsrv.core.api.user.PlayerUserLinker;
-import com.discordsrv.core.auth.PlayerUserAuthenticator;
 import com.discordsrv.core.channel.LocalChatChannelLinker;
 import com.discordsrv.core.conf.Configuration;
-import com.discordsrv.core.conf.annotation.Configured;
-import com.discordsrv.core.conf.annotation.Val;
-import com.discordsrv.core.debug.Debugger;
-import com.discordsrv.core.discord.DSRVJDABuilder;
-import com.discordsrv.core.role.LocalTeamRoleLinker;
-import com.discordsrv.core.user.LocalPlayerUserLinker;
-import com.discordsrv.core.user.UplinkedPlayerUserLinker;
 import com.discordsrv.sponge.listener.ChannelMessageListener;
 import com.discordsrv.sponge.listener.ChatMessageListener;
 import com.discordsrv.sponge.listener.DeathMessageListener;
-import com.discordsrv.sponge.lookup.MessageChannelChatLookup;
-import com.discordsrv.sponge.lookup.SpongeChatChannelLookup;
-import com.discordsrv.sponge.lookup.SpongePlayerUserLookup;
-import com.discordsrv.sponge.lookup.SpongeTeamRoleLookup;
-import com.discordsrv.sponge.unit.SpongeConsole;
+import com.discordsrv.sponge.listener.JoinLeaveMessageListener;
 import com.discordsrv.sponge.unit.chat.SpongeChat;
 import com.discordsrv.sponge.unit.chat.SpongeGlobalChat;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.inject.Inject;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -52,7 +38,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.yaml.snakeyaml.Yaml;
 
@@ -60,7 +45,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.naming.ConfigurationException;
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -75,51 +59,15 @@ import java.util.Optional;
  * Main plugin class for DiscordSRV-Sponge.
  */
 @ParametersAreNonnullByDefault
-@NoArgsConstructor
 @Plugin(id = "discordsrv", name = "DiscordSRV", description = "empty")
 public class DSRVSponge implements Platform<SpongeContext> {
 
-    @Getter private SpongeContext context = new SpongeContext();
+    @Getter private SpongeContext context;
     @Inject @ConfigDir(sharedRoot = false) private File configDirectory;
 
     /**
-     * Configured constructor for the Sponge implementation of DiscordSRV.
-     *
-     * @param remoteLinker
-     *         Whether or not remote linking should be used
-     */
-    @Configured
-    public DSRVSponge(final @Val("configuration") Configuration configuration,
-                      final @Val("use_remote_linking") boolean remoteLinker,
-                      final @Val("executor") SpongeExecutorService spongeExecutorService) {
-        try {
-            SpongePlayerUserLookup playerUserLookup = new SpongePlayerUserLookup(context);
-            PlayerUserLinker playerUserLinker =
-                remoteLinker ? configuration.create(UplinkedPlayerUserLinker.class, playerUserLookup)
-                    : configuration.create(LocalPlayerUserLinker.class, playerUserLookup);
-            SpongeTeamRoleLookup teamRoleLookup = new SpongeTeamRoleLookup(context);
-            SpongeChatChannelLookup chatChannelLookup = new SpongeChatChannelLookup(context);
-            context.setConfiguration(configuration);
-            context.setUserAuthenticator(
-                configuration.create(PlayerUserAuthenticator.class, playerUserLinker, spongeExecutorService));
-            context.setPlayerUserLinker(playerUserLinker);
-            context.setPlayerUserLookup(playerUserLookup);
-            context.setTeamRoleLinker(configuration.create(LocalTeamRoleLinker.class, teamRoleLookup));
-            context.setTeamRoleLookup(teamRoleLookup);
-            context.setChatChannelLinker(
-                configuration.create(LocalChatChannelLinker.class, new SpongeConsole(context), chatChannelLookup));
-            context.setChatChannelLookup(chatChannelLookup);
-            context.setMessageChannelChatLookup(new MessageChannelChatLookup());
-            context.setSpongeExecutorService(spongeExecutorService);
-            context.setGame(Sponge.getGame());
-            context.setJda(configuration.create(DSRVJDABuilder.class).build());
-        } catch (ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException | LoginException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * GamePreInitializationEvent listener.
+     * The config & context are initiated here.
      *
      * @param event
      *         GamePreInitializationEvent
@@ -127,6 +75,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
         try {
+            // config
             if (!configDirectory.exists()) {
                 configDirectory.mkdir();
             }
@@ -148,14 +97,19 @@ public class DSRVSponge implements Platform<SpongeContext> {
                 .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
             Configuration configuration =
                 Configuration.getStandardConfiguration(new Yaml(), configUrl, userConfig.toURI().toURL());
+            // config mappings
             Map<String, String> mappings = new HashMap<>();
-            mappings.put("plugin", DSRVSponge.class.getName());
+            mappings.put("plugin", SpongeContext.class.getName());
             mappings.put("channels", LocalChatChannelLinker.class.getName());
+            mappings.put("generic-message-listener", ChannelMessageListener.class.getName());
             configuration.applyRemapping(mappings);
-            context = configuration.create(DSRVSponge.class, configuration,
-                Sponge.getScheduler().createSyncExecutor(this)).getContext();
+            // context
+            context = configuration
+                .create(SpongeContext.class, configuration, Sponge.getScheduler().createSyncExecutor(this),
+                    Sponge.getGame());
+            // global channel translator
             context.getMessageChannelChatLookup().addTranslator((original, callback) -> {
-                if (original.getClass().getName().startsWith("org.spongepowered.api.text.channel.MessageChannel")) {
+                if (original.getClass().getName().startsWith(MessageChannel.class.getName())) {
                     callback.onSuccess(new SpongeGlobalChat(original));
                 }
             });
@@ -166,14 +120,21 @@ public class DSRVSponge implements Platform<SpongeContext> {
 
     /**
      * GameInitializationEvent listener.
+     * Listeners are initiated & registered here.
      *
      * @param event
      *         GameInitializationEvent
      */
     @Listener
     public void onGameInitialization(GameInitializationEvent event) {
-        Sponge.getEventManager().registerListeners(this, new ChannelMessageListener(this));
+        try {
+            Sponge.getEventManager()
+                .registerListeners(this, context.getConfiguration().create(ChannelMessageListener.class, this));
+        } catch (ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
+        }
         Sponge.getEventManager().registerListeners(this, new ChatMessageListener(this));
+        Sponge.getEventManager().registerListeners(this, new JoinLeaveMessageListener(this));
         Sponge.getEventManager().registerListeners(this, new DeathMessageListener(this));
         try {
             Class.forName("org.spongepowered.api.advancement.Advancement");
@@ -195,20 +156,16 @@ public class DSRVSponge implements Platform<SpongeContext> {
      */
     public void sendMessage(MessageChannelEvent event, @Nullable Player player) {
         Optional<MessageChannel> messageChannel = event.getChannel();
-        if (!messageChannel.isPresent()) {
+        if (!messageChannel.isPresent() || event.getFormatter().toText().isEmpty() || event.isMessageCancelled()) {
             return;
         }
-        context
-            .getMessageChannelChatLookup()
-            .lookup(
-                messageChannel.get(),
-                new FutureCallback<SpongeChat>() {
+        context.getMessageChannelChatLookup().lookup(messageChannel.get(), new FutureCallback<SpongeChat>() {
             @Override
             public void onSuccess(@Nullable final SpongeChat result) {
                 if (result == null) {
                     return;
                 }
-                sendMessage(result, player);
+                sendMessage(result, event.getFormatter().toText().toPlain(), player);
             }
 
             @Override
@@ -225,7 +182,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
      * @param player
      *         the Player that send the message
      */
-    public void sendMessage(SpongeChat spongeChat, @Nullable Player player) {
+    public void sendMessage(SpongeChat spongeChat, String message, @Nullable Player player) {
         context.getChatChannelLinker().translate(spongeChat, new FutureCallback<TextChannel>() {
             @Override
             public void onSuccess(@Nullable final TextChannel result) {
@@ -233,7 +190,9 @@ public class DSRVSponge implements Platform<SpongeContext> {
                     return;
                 }
                 if (player != null) {
-                    result.sendMessage(player.getName()).queue();
+                    result.sendMessage(message + " (" + player.getName() + ")").queue();
+                } else {
+                    result.sendMessage(message).queue();
                 }
             }
 

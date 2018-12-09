@@ -1,1 +1,12 @@
 # Internal configuration file; do not touch
+
+generic-message-listener:
+    blacklist: true
+    events: [
+        "org.spongepowered.api.event.achievement.GrantAchievementEvent$TargetPlayer",
+        "org.spongepowered.api.event.advancement.AdvancementEvent$Grant",
+        "org.spongepowered.api.event.message.MessageChannelEvent$Chat",
+        "org.spongepowered.api.event.entity.DestructEntityEvent$Death",
+        "org.spongepowered.api.event.network.ClientConnectionEvent$Join",
+        "org.spongepowered.api.event.network.ClientConnectionEvent$Disconnect"
+    ]
