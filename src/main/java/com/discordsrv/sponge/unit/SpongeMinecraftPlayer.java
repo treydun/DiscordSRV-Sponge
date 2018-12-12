@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 @Value
 public class SpongeMinecraftPlayer implements MinecraftPlayer {
 
-    public final Player player;
+    private final Player player;
 
     /**
      * Sends a message to this instance. If the message could not be completed, the {@link

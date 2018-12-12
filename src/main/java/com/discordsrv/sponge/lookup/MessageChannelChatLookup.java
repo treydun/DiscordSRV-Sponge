@@ -31,16 +31,28 @@ import java.util.stream.Collectors;
 
 /**
  * MessageChannelChatLookup type, for making dynamic lookups.
+ *
+ * Sponge specific.
  */
 @ParametersAreNonnullByDefault
 public class MessageChannelChatLookup {
 
     private final Set<Translator<MessageChannel, SpongeChat>> chatTranslators = new CopyOnWriteArraySet<>();
 
+    /**
+     * Looks up the {@link SpongeChat} from the {@link MessageChannel}.
+     *
+     * @param messageChannel The message channel used for the lookup
+     * @param callback Lookup result callback
+     */
     public void lookup(final MessageChannel messageChannel, final FutureCallback<SpongeChat> callback) {
-        new MultiCallbackWrapper<>(chatTranslators.stream().map(
-            translator -> (Consumer<FutureCallback<SpongeChat>>) internal -> translator
-                .translate(messageChannel, internal)).collect(Collectors.toList()), callback).run();
+        try {
+            new MultiCallbackWrapper<>(chatTranslators.stream().map(
+                translator -> (Consumer<FutureCallback<SpongeChat>>) internal -> translator
+                    .translate(messageChannel, internal)).collect(Collectors.toList()), callback).run();
+        } catch (Throwable throwable) {
+            callback.onFailure(throwable);
+        }
     }
 
     /**

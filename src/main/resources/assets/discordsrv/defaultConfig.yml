@@ -14,8 +14,11 @@ bot:
 
 channels:
     # {"Minecraft channel ID": "Discord channel ID"}
-    # Example: {"global": "137421286501646336"}
-    channels: {"global": "id"}
+    # Example:
+    # channels:
+    #     global: "137421286501646336"
+    channels:
+        global: "id"
     # Console channel's id
     # Example: "137722245853347840"
     console_channel_id: "id"

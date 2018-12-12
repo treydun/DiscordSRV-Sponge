@@ -27,40 +27,48 @@ import org.spongepowered.api.event.message.MessageChannelEvent;
 
 import java.util.List;
 
+/**
+ * Generic channel message listener.
+ */
 public class ChannelMessageListener {
 
     private final DSRVSponge plugin;
     private final boolean enabled, blacklist;
     private final List<String> events;
 
+    /**
+     * Configured constructor.
+     *
+     * @param plugin
+     *         DSRVSponge plugin
+     * @param enabled
+     *         enabled config option
+     * @param blacklist
+     *         blacklist config option
+     * @param events
+     *         events config option
+     */
     @Configured
-    public ChannelMessageListener(
-        @Val("plugin") DSRVSponge plugin,
-        @Val("enabled") boolean enabled,
-        @Val("blacklist") boolean blacklist,
-        @Val("events") List<String> events
-    ) {
+    public ChannelMessageListener(@Val("plugin") DSRVSponge plugin, @Val("enabled") boolean enabled,
+                                  @Val("blacklist") boolean blacklist, @Val("events") List<String> events) {
         this.plugin = plugin;
         this.enabled = enabled;
         this.blacklist = blacklist;
         this.events = events;
     }
 
+    /**
+     * MessageChannelEvent listener.
+     *
+     * @param event
+     *         MessageChannelEvent
+     */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent event) {
-        if (!enabled) {
+        if (!enabled
+            || events.stream().anyMatch(eventClass -> event.getClass().getName().startsWith(eventClass)) == blacklist) {
             return;
         }
-
-        if (events.stream().anyMatch(eventClass -> event.getClass().getName().startsWith(eventClass)) == blacklist) {
-            System.out.println(event.getClass().getName() + " [Ignored] " + event.getFormatter().toText().toPlain()
-                + " (" + event.getChannel().map(messageChannel -> messageChannel.getClass().getName())
-                .orElse(null) + ")");
-            return;
-        }
-        System.out.println(event.getClass().getName() + " [Processed] " + event.getFormatter().toText().toPlain()
-            + " (" + event.getChannel().map(messageChannel -> messageChannel.getClass().getName())
-            .orElse(null) + ")");
         plugin.sendMessage(event, null);
     }
 }

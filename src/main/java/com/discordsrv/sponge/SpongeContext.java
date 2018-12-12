@@ -38,7 +38,6 @@ import com.discordsrv.sponge.unit.SpongeConsole;
 import lombok.Getter;
 import net.dv8tion.jda.core.JDA;
 import org.apache.commons.collections4.bidimap.DualLinkedHashBidiMap;
-import org.apache.commons.collections4.bidimap.DualTreeBidiMap;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 
@@ -70,10 +69,14 @@ public class SpongeContext implements Context {
     /**
      * Main constructor for SpongeContext.
      *
-     * @param configuration Configuration used to initiate objects
-     * @param spongeExecutorService synchronous executor service
-     * @param game Sponge game object
-     * @param remoteLinker user_remote_linking config option
+     * @param configuration
+     *         Configuration used to initiate objects
+     * @param spongeExecutorService
+     *         Synchronous executor service
+     * @param game
+     *         Sponge game object
+     * @param remoteLinker
+     *         user_remote_linking config option
      *
      * @throws ConfigurationException
      *         If there are no constructors with the {@link Configured} annotation.
@@ -83,6 +86,8 @@ public class SpongeContext implements Context {
      *         Shouldn't happen, but inherited from {@link Constructor#newInstance(Object...)}.
      * @throws InstantiationException
      *         If instantiation of the type fails.
+     * @throws LoginException
+     *         If the provided token is invalid.
      */
     @Configured
     public SpongeContext(final @Val("configuration") Configuration configuration,
@@ -99,8 +104,9 @@ public class SpongeContext implements Context {
         this.userAuthenticator =
             configuration.create(PlayerUserAuthenticator.class, playerUserLinker, spongeExecutorService);
         this.teamRoleLinker = configuration.create(LocalTeamRoleLinker.class, teamRoleLookup);
-        chatChannelLinker = configuration.create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(),
-            getChatChannelLookup(), new SpongeConsole(this));
+        chatChannelLinker = configuration
+            .create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(), getChatChannelLookup(),
+                new SpongeConsole(this));
         this.messageChannelChatLookup = new MessageChannelChatLookup();
         this.spongeExecutorService = spongeExecutorService;
         this.game = game;

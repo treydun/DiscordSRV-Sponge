@@ -35,7 +35,8 @@ public class JoinLeaveMessageListener {
     /**
      * ClientConnectionEvent.Join listener.
      *
-     * @param event ClientConnectionEvent.Join
+     * @param event
+     *         ClientConnectionEvent.Join
      */
     @Listener(order = Order.POST)
     public void onLogin(ClientConnectionEvent.Join event) {
@@ -45,7 +46,8 @@ public class JoinLeaveMessageListener {
     /**
      * ClientConnectionEvent.Disconnect listener.
      *
-     * @param event ClientConnectionEvent.Disconnect
+     * @param event
+     *         ClientConnectionEvent.Disconnect
      */
     @Listener(order = Order.POST)
     public void onDisconnect(ClientConnectionEvent.Disconnect event) {

@@ -1,12 +1,13 @@
 # Internal configuration file; do not touch
+# This file contains options that are not in the config by default
 
 generic-message-listener:
     blacklist: true
     events: [
-        "org.spongepowered.api.event.achievement.GrantAchievementEvent$TargetPlayer",
-        "org.spongepowered.api.event.advancement.AdvancementEvent$Grant",
-        "org.spongepowered.api.event.message.MessageChannelEvent$Chat",
-        "org.spongepowered.api.event.entity.DestructEntityEvent$Death",
-        "org.spongepowered.api.event.network.ClientConnectionEvent$Join",
-        "org.spongepowered.api.event.network.ClientConnectionEvent$Disconnect"
+        "org.spongepowered.api.event.GrantAchievementEvent$TargetPlayer",
+        "org.spongepowered.api.event.AdvancementEvent$Grant",
+        "org.spongepowered.api.event.MessageChannelEvent$Chat",
+        "org.spongepowered.api.event.DestructEntityEvent$Death",
+        "org.spongepowered.api.event.ClientConnectionEvent$Join",
+        "org.spongepowered.api.event.ClientConnectionEvent$Disconnect"
     ]

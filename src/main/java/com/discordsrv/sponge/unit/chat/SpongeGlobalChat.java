@@ -22,9 +22,18 @@ import org.spongepowered.api.text.channel.MessageChannel;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
+/**
+ * SpongeChat implementation for the "global" channel.
+ */
 @ParametersAreNonnullByDefault
 public class SpongeGlobalChat extends SpongeChat {
 
+    /**
+     * The main constructor.
+     *
+     * @param messageChannel
+     *         The message channel representing the "global" channel
+     */
     public SpongeGlobalChat(final MessageChannel messageChannel) {
         super(messageChannel);
     }

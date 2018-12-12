@@ -66,8 +66,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     @Inject @ConfigDir(sharedRoot = false) private File configDirectory;
 
     /**
-     * GamePreInitializationEvent listener.
-     * The config & context are initiated here.
+     * GamePreInitializationEvent listener. The config & context are initiated here.
      *
      * @param event
      *         GamePreInitializationEvent
@@ -82,6 +81,10 @@ public class DSRVSponge implements Platform<SpongeContext> {
             File userConfig = new File(configDirectory, "config.yml");
             URL defaultConfigUrl = Sponge.getAssetManager().getAsset(this, "defaultConfig.yml")
                 .orElseThrow(() -> new RuntimeException("Default config missing from the jar")).getUrl();
+            URL protectedConfigUrl = Sponge.getAssetManager().getAsset(this, "protectedConfig.yml")
+                .orElseThrow(() -> new RuntimeException("Protected config missing from the jar")).getUrl();
+            URL configUrl = Sponge.getAssetManager().getAsset(this, "config.yml")
+                .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
             if (!userConfig.exists()) {
                 userConfig.createNewFile();
                 InputStream inputStream = defaultConfigUrl.openStream();
@@ -93,10 +96,8 @@ public class DSRVSponge implements Platform<SpongeContext> {
                 inputStream.close();
                 outputStream.close();
             }
-            URL configUrl = Sponge.getAssetManager().getAsset(this, "config.yml")
-                .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
-            Configuration configuration =
-                Configuration.getStandardConfiguration(new Yaml(), configUrl, userConfig.toURI().toURL());
+            Configuration configuration = Configuration
+                .getStandardConfiguration(new Yaml(), protectedConfigUrl, userConfig.toURI().toURL(), configUrl);
             // config mappings
             Map<String, String> mappings = new HashMap<>();
             mappings.put("plugin", SpongeContext.class.getName());
@@ -119,8 +120,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     }
 
     /**
-     * GameInitializationEvent listener.
-     * Listeners are initiated & registered here.
+     * GameInitializationEvent listener. Listeners are initiated & registered here.
      *
      * @param event
      *         GameInitializationEvent
