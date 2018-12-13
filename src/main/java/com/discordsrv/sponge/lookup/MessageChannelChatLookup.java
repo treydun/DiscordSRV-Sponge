@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 /**
  * MessageChannelChatLookup type, for making dynamic lookups.
- *
+ * <p>
  * Sponge specific.
  */
 @ParametersAreNonnullByDefault
@@ -40,10 +40,12 @@ public class MessageChannelChatLookup {
     private final Set<Translator<MessageChannel, SpongeChat>> chatTranslators = new CopyOnWriteArraySet<>();
 
     /**
-     * Looks up the {@link SpongeChat} from the {@link MessageChannel}.
+     * Looks up the {@link SpongeChat} for the {@link MessageChannel}.
      *
-     * @param messageChannel The message channel used for the lookup
-     * @param callback Lookup result callback
+     * @param messageChannel
+     *         The message channel used for the lookup
+     * @param callback
+     *         Lookup result callback
      */
     public void lookup(final MessageChannel messageChannel, final FutureCallback<SpongeChat> callback) {
         try {

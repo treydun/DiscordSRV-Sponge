@@ -13,10 +13,15 @@ bot:
         type: 3
 
 channels:
-    # {"Minecraft channel ID": "Discord channel ID"}
+    # channel_name: "channel_id"
+    #
+    # Default channel: global
+    # Plugin channel format: "plugin:channel"
+    #
     # Example:
     # channels:
     #     global: "137421286501646336"
+    #     "nucleus:staff": "464155898030587905"
     channels:
         global: "id"
     # Console channel's id

@@ -61,10 +61,11 @@ public class SpongeContext implements Context {
     private final SpongeTeamRoleLookup teamRoleLookup;
     private final ChatChannelLinker chatChannelLinker;
     private final SpongeChatChannelLookup chatChannelLookup;
+    private final JDA jda;
+    // Sponge specific
     private final MessageChannelChatLookup messageChannelChatLookup;
     private final SpongeExecutorService spongeExecutorService;
     private final Game game;
-    private final JDA jda;
 
     /**
      * Main constructor for SpongeContext.
@@ -76,7 +77,7 @@ public class SpongeContext implements Context {
      * @param game
      *         Sponge game object
      * @param remoteLinker
-     *         user_remote_linking config option
+     *         use_remote_linking config option
      *
      * @throws ConfigurationException
      *         If there are no constructors with the {@link Configured} annotation.
@@ -104,7 +105,7 @@ public class SpongeContext implements Context {
         this.userAuthenticator =
             configuration.create(PlayerUserAuthenticator.class, playerUserLinker, spongeExecutorService);
         this.teamRoleLinker = configuration.create(LocalTeamRoleLinker.class, teamRoleLookup);
-        chatChannelLinker = configuration
+        this.chatChannelLinker = configuration
             .create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(), getChatChannelLookup(),
                 new SpongeConsole(this));
         this.messageChannelChatLookup = new MessageChannelChatLookup();

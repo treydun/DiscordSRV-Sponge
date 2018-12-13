@@ -30,14 +30,14 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.inject.Inject;
 import lombok.Getter;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.spongepowered.api.Sponge;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.yaml.snakeyaml.Yaml;
 
@@ -64,9 +64,11 @@ public class DSRVSponge implements Platform<SpongeContext> {
 
     @Getter private SpongeContext context;
     @Inject @ConfigDir(sharedRoot = false) private File configDirectory;
+    @Inject private PluginContainer pluginContainer;
+    @Inject private Game game;
 
     /**
-     * GamePreInitializationEvent listener. The config & context are initiated here.
+     * GamePreInitializationEvent listener.
      *
      * @param event
      *         GamePreInitializationEvent
@@ -79,11 +81,11 @@ public class DSRVSponge implements Platform<SpongeContext> {
                 configDirectory.mkdir();
             }
             File userConfig = new File(configDirectory, "config.yml");
-            URL defaultConfigUrl = Sponge.getAssetManager().getAsset(this, "defaultConfig.yml")
+            URL defaultConfigUrl = pluginContainer.getAsset("defaultConfig.yml")
                 .orElseThrow(() -> new RuntimeException("Default config missing from the jar")).getUrl();
-            URL protectedConfigUrl = Sponge.getAssetManager().getAsset(this, "protectedConfig.yml")
+            URL protectedConfigUrl = pluginContainer.getAsset("protectedConfig.yml")
                 .orElseThrow(() -> new RuntimeException("Protected config missing from the jar")).getUrl();
-            URL configUrl = Sponge.getAssetManager().getAsset(this, "config.yml")
+            URL configUrl = pluginContainer.getAsset("config.yml")
                 .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
             if (!userConfig.exists()) {
                 userConfig.createNewFile();
@@ -106,43 +108,29 @@ public class DSRVSponge implements Platform<SpongeContext> {
             configuration.applyRemapping(mappings);
             // context
             context = configuration
-                .create(SpongeContext.class, configuration, Sponge.getScheduler().createSyncExecutor(this),
-                    Sponge.getGame());
+                .create(SpongeContext.class, configuration, game.getScheduler().createSyncExecutor(this), game);
             // global channel translator
             context.getMessageChannelChatLookup().addTranslator((original, callback) -> {
                 if (original.getClass().getName().startsWith(MessageChannel.class.getName())) {
                     callback.onSuccess(new SpongeGlobalChat(original));
                 }
             });
-        } catch (IOException | ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * GameInitializationEvent listener. Listeners are initiated & registered here.
-     *
-     * @param event
-     *         GameInitializationEvent
-     */
-    @Listener
-    public void onGameInitialization(GameInitializationEvent event) {
-        try {
-            Sponge.getEventManager()
+            // listeners
+            game.getEventManager().registerListeners(this, new ChatMessageListener(this));
+            game.getEventManager().registerListeners(this, new JoinLeaveMessageListener(this));
+            game.getEventManager().registerListeners(this, new DeathMessageListener(this));
+            try {
+                Class.forName("org.spongepowered.api.advancement.Advancement");
+                game.getEventManager()
+                    .registerListeners(this, new com.discordsrv.sponge.listener.AdvancementMessageListener(this));
+            } catch (ClassNotFoundException ignored) {
+                game.getEventManager()
+                    .registerListeners(this, new com.discordsrv.sponge.listener.AchievementMessageListener(this));
+            }
+            game.getEventManager()
                 .registerListeners(this, context.getConfiguration().create(ChannelMessageListener.class, this));
-        } catch (ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-        }
-        Sponge.getEventManager().registerListeners(this, new ChatMessageListener(this));
-        Sponge.getEventManager().registerListeners(this, new JoinLeaveMessageListener(this));
-        Sponge.getEventManager().registerListeners(this, new DeathMessageListener(this));
-        try {
-            Class.forName("org.spongepowered.api.advancement.Advancement");
-            Sponge.getEventManager()
-                .registerListeners(this, new com.discordsrv.sponge.listener.AdvancementMessageListener(this));
-        } catch (ClassNotFoundException ignored) {
-            Sponge.getEventManager()
-                .registerListeners(this, new com.discordsrv.sponge.listener.AchievementMessageListener(this));
+        } catch (IOException | ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -154,7 +142,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
      * @param player
      *         the Player that sent the message
      */
-    public void sendMessage(MessageChannelEvent event, @Nullable Player player) {
+    public void sendMessage(final MessageChannelEvent event, final @Nullable Player player) {
         Optional<MessageChannel> messageChannel = event.getChannel();
         if (!messageChannel.isPresent() || event.getFormatter().toText().isEmpty() || event.isMessageCancelled()) {
             return;
@@ -169,7 +157,8 @@ public class DSRVSponge implements Platform<SpongeContext> {
             }
 
             @Override
-            public void onFailure(final Throwable t) {
+            public void onFailure(final Throwable throwable) {
+                throwable.printStackTrace();
             }
         });
     }
@@ -182,7 +171,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
      * @param player
      *         the Player that send the message
      */
-    public void sendMessage(SpongeChat spongeChat, String message, @Nullable Player player) {
+    public void sendMessage(final SpongeChat spongeChat, final String message, final @Nullable Player player) {
         context.getChatChannelLinker().translate(spongeChat, new FutureCallback<TextChannel>() {
             @Override
             public void onSuccess(@Nullable final TextChannel result) {
@@ -197,7 +186,8 @@ public class DSRVSponge implements Platform<SpongeContext> {
             }
 
             @Override
-            public void onFailure(@Nonnull final Throwable t) {
+            public void onFailure(@Nonnull final Throwable throwable) {
+                throwable.printStackTrace();
             }
         });
     }
