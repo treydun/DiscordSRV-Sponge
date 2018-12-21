@@ -12,7 +12,7 @@ before_install: chmod a+x gradlew
 deploy:
   skip_cleanup: true
   provider: script
-  script: "./gradlew uploadArchives"
+  script: "if [[ $TRAVIS_JOB_NUMBER == *.1 ]]; then ./gradlew uploadArchives; fi"
   on:
     branch: master
 env:
