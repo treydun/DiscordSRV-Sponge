@@ -1,0 +1,20 @@
+language: java
+jdk:
+- openjdk8
+- openjdk11
+- openjdk-ea
+- oraclejdk8
+- oraclejdk11
+matrix:
+  allow_failures:
+  - jdk: openjdk-ea
+before_install: chmod a+x gradlew
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: "./gradlew uploadArchives"
+  on:
+    branch: master
+env:
+  matrix:
+    secure: JllUrR9ODnQWeys/EjHVnkjTa0kMn1ery8HCfAyjECUuX5ok5gvHVNj+ExICqcuB551SDJYdbMQdVIrmUsyDyYLHEiHE8U1pZFh3KTPhvWEa0WP335e1OpgkHX99moK6LtMxjsQ5uC7bAP8aBM3wf7U4ytNiN71Z3u5oWekEFC64EHtetSHYjyUcy7XzAflXEDg7SecKc58VKw3e/X0C8z7/O26NfX7948oJnwXLQxS48bsznWPOqEoSiSFT7gPK9WJqBsQT7lXwW4xFOQSOJZSqSmCHSU/pjuOx6R7UwbyAWJEi4B4oz7TjhmfI9taPS5ZVBPQPDPai4udoKeUnmEGUlZXJWDI2CUWkuGI50ikd4LkFmzIetCKIw8DDX8AA+yKMlRJL26J+BQLaCVqX91WW/1lZ657dYNJIczNrfEfwxvSj0A5eE8t0TH7V3Ah6QAV8JFf7k57U3F0hlMb7+ePMCwdqicj6uN5xDdnXkLMFDSAxEZr+Gb/Bt+SWHCj0miJdY2iUcZbA20ljfZGwlSgfnqftCHB/4AbRArU16y2YPs7VgcCIQ/mYFFpv21DKmsxBUlZMeWKv5IyKsvdTQP0ADvj9i840Ke3piRgBwHOjSxGqTrDOt2FpoZZvdr5AnwOue2i9k2rgPX6zDKkIR901Gez0sxYyptLkIR/L/CA=
