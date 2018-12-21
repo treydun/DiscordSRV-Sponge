@@ -64,7 +64,8 @@ public class SpongeContext implements Context {
     private final JDA jda;
     // Sponge specific
     private final MessageChannelChatLookup messageChannelChatLookup;
-    private final SpongeExecutorService spongeExecutorService;
+    private final SpongeExecutorService syncExecutor;
+    private final SpongeExecutorService asyncExecutor;
     private final Game game;
 
     /**
@@ -72,7 +73,7 @@ public class SpongeContext implements Context {
      *
      * @param configuration
      *         Configuration used to initiate objects
-     * @param spongeExecutorService
+     * @param syncExecutorService
      *         Synchronous executor service
      * @param game
      *         Sponge game object
@@ -92,7 +93,8 @@ public class SpongeContext implements Context {
      */
     @Configured
     public SpongeContext(final @Val("configuration") Configuration configuration,
-                         final @Val("executor") SpongeExecutorService spongeExecutorService,
+                         final @Val("sync_executor") SpongeExecutorService syncExecutorService,
+                         final @Val("async_executor") SpongeExecutorService asyncExecutorService,
                          final @Val("game") Game game, final @Val("use_remote_linking") boolean remoteLinker)
         throws ConfigurationException, IllegalAccessException, InvocationTargetException, InstantiationException,
                LoginException {
@@ -103,19 +105,26 @@ public class SpongeContext implements Context {
         this.chatChannelLookup = new SpongeChatChannelLookup(this);
         this.configuration = configuration;
         this.userAuthenticator =
-            configuration.create(PlayerUserAuthenticator.class, playerUserLinker, spongeExecutorService);
+            configuration.create(PlayerUserAuthenticator.class, playerUserLinker, asyncExecutorService);
         this.teamRoleLinker = configuration.create(LocalTeamRoleLinker.class, teamRoleLookup);
         this.chatChannelLinker = configuration
             .create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(), getChatChannelLookup(),
                 new SpongeConsole(this));
         this.messageChannelChatLookup = new MessageChannelChatLookup();
-        this.spongeExecutorService = spongeExecutorService;
+        this.syncExecutor = syncExecutorService;
+        this.asyncExecutor = asyncExecutorService;
         this.game = game;
         this.jda = configuration.create(DSRVJDABuilder.class).build();
     }
 
+    /**
+     * Fetches the event handler of this DSRVContext.
+     *
+     * @return eventHandler The event handler.
+     * @deprecated Use {@link #getSyncExecutor()} or {@link #getAsyncExecutor()}
+     */
     @Override
     public Consumer<Runnable> getEventHandler() {
-        return spongeExecutorService::execute;
+        return syncExecutor::execute;
     }
 }

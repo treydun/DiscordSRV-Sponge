@@ -80,13 +80,13 @@ public class DSRVSponge implements Platform<SpongeContext> {
             if (!configDirectory.exists()) {
                 configDirectory.mkdir();
             }
-            File userConfig = new File(configDirectory, "config.yml");
             URL defaultConfigUrl = pluginContainer.getAsset("defaultConfig.yml")
                 .orElseThrow(() -> new RuntimeException("Default config missing from the jar")).getUrl();
             URL protectedConfigUrl = pluginContainer.getAsset("protectedConfig.yml")
                 .orElseThrow(() -> new RuntimeException("Protected config missing from the jar")).getUrl();
             URL configUrl = pluginContainer.getAsset("config.yml")
                 .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
+            File userConfig = new File(configDirectory, "config.yml");
             if (!userConfig.exists()) {
                 userConfig.createNewFile();
                 InputStream inputStream = defaultConfigUrl.openStream();
@@ -108,7 +108,8 @@ public class DSRVSponge implements Platform<SpongeContext> {
             configuration.applyRemapping(mappings);
             // context
             context = configuration
-                .create(SpongeContext.class, configuration, game.getScheduler().createSyncExecutor(this), game);
+                .create(SpongeContext.class, configuration, game.getScheduler().createSyncExecutor(this),
+                    game.getScheduler().createAsyncExecutor(this), game);
             // global channel translator
             context.getMessageChannelChatLookup().addTranslator((original, callback) -> {
                 if (original.getClass().getName().startsWith(MessageChannel.class.getName())) {
