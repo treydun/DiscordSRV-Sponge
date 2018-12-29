@@ -108,7 +108,7 @@ public class SpongeContext implements Context {
             configuration.create(PlayerUserAuthenticator.class, playerUserLinker, asyncExecutorService);
         this.teamRoleLinker = configuration.create(LocalTeamRoleLinker.class, teamRoleLookup);
         this.chatChannelLinker = configuration
-            .create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(), getChatChannelLookup(),
+            .create(LocalChatChannelLinker.class, new DualLinkedHashBidiMap<>(), chatChannelLookup,
                 new SpongeConsole(this));
         this.messageChannelChatLookup = new MessageChannelChatLookup();
         this.syncExecutor = syncExecutorService;

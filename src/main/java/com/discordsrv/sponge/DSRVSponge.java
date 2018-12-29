@@ -80,13 +80,13 @@ public class DSRVSponge implements Platform<SpongeContext> {
             if (!configDirectory.exists()) {
                 configDirectory.mkdir();
             }
-            URL defaultConfigUrl = pluginContainer.getAsset("defaultConfig.yml")
+            URL defaultConfigUrl = pluginContainer.getAsset("defaultConfig.yaml")
                 .orElseThrow(() -> new RuntimeException("Default config missing from the jar")).getUrl();
-            URL protectedConfigUrl = pluginContainer.getAsset("protectedConfig.yml")
+            URL protectedConfigUrl = pluginContainer.getAsset("protectedConfig.yaml")
                 .orElseThrow(() -> new RuntimeException("Protected config missing from the jar")).getUrl();
-            URL configUrl = pluginContainer.getAsset("config.yml")
+            URL configUrl = pluginContainer.getAsset("config.yaml")
                 .orElseThrow(() -> new RuntimeException("Config missing from the jar")).getUrl();
-            File userConfig = new File(configDirectory, "config.yml");
+            File userConfig = new File(configDirectory, "config.yaml");
             if (!userConfig.exists()) {
                 userConfig.createNewFile();
                 InputStream inputStream = defaultConfigUrl.openStream();
