@@ -26,13 +26,35 @@ channels:
         global: "id"
     # Console channel's id
     # Example: "137722245853347840"
-    console_channel_id: "id"
+    console_channel: "id"
 
 plugin:
     # Should BungeeCord be used for account linking
     use_remote_linking: false
 
-generic-message-listener:
+chat_message_listener:
+    enabled: true
+
+join_leave_message_listener:
+    join_enabled: true
+    leave_enabled: true
+
+death_message_listener:
+    enabled: true
+
+# MC <1.12 servers only
+#
+# Achievement events aren't triggered on Sponge API 5
+# You can get AchievementAdapter to fix this:
+# https://ore.spongepowered.org/Vankka/AchievementAdapter
+achievement_message_listener:
+    enabled: true
+
+# MC >1.11 servers only
+advancement_message_listener:
+    enabled: true
+
+generic_message_listener:
     # Whether or not generic channel messages (/me, /say etc.) should be enabled
     enabled: false
 

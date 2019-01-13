@@ -18,8 +18,9 @@
 
 package com.discordsrv.sponge.listener;
 
+import com.discordsrv.core.conf.annotation.Configured;
+import com.discordsrv.core.conf.annotation.Val;
 import com.discordsrv.sponge.DSRVSponge;
-import lombok.AllArgsConstructor;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -27,10 +28,32 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 /**
  * Join & Leave message listeners.
  */
-@AllArgsConstructor
 public class JoinLeaveMessageListener {
 
-    private DSRVSponge plugin;
+    private final DSRVSponge plugin;
+    private final boolean joinEnabled;
+    private final boolean leaveEnabled;
+
+    /**
+     * Configured constructor.
+     *
+     * @param plugin DSRVSponge
+     * @param joinEnabled joinEnabled config option
+     * @param leaveEnabled leaveEnabled config option
+     */
+    @Configured
+    public JoinLeaveMessageListener(
+        final @Val("plugin") DSRVSponge plugin,
+        final @Val("join_enabled") boolean joinEnabled,
+        final @Val("leave_enabled") boolean leaveEnabled
+    ) {
+        this.plugin = plugin;
+        this.joinEnabled = joinEnabled;
+        this.leaveEnabled = leaveEnabled;
+        if (joinEnabled || leaveEnabled) {
+            plugin.getContext().getGame().getEventManager().registerListeners(plugin, this);
+        }
+    }
 
     /**
      * ClientConnectionEvent.Join listener.
@@ -40,6 +63,9 @@ public class JoinLeaveMessageListener {
      */
     @Listener(order = Order.POST)
     public void onLogin(ClientConnectionEvent.Join event) {
+        if (!joinEnabled) {
+            return;
+        }
         plugin.sendMessage(event, event.getTargetEntity());
     }
 
@@ -51,6 +77,9 @@ public class JoinLeaveMessageListener {
      */
     @Listener(order = Order.POST)
     public void onDisconnect(ClientConnectionEvent.Disconnect event) {
+        if (!leaveEnabled) {
+            return;
+        }
         plugin.sendMessage(event, event.getTargetEntity());
     }
 }

@@ -1,7 +1,7 @@
 # Internal configuration file; do not touch
 # This file contains options that are not in the config by default
 
-generic-message-listener:
+generic_message_listener:
     blacklist: true
     events: [
         "org.spongepowered.api.event.GrantAchievementEvent$TargetPlayer",

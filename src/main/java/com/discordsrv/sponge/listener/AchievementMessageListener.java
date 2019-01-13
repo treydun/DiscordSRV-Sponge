@@ -17,8 +17,9 @@
  */
 package com.discordsrv.sponge.listener;
 
+import com.discordsrv.core.conf.annotation.Configured;
+import com.discordsrv.core.conf.annotation.Val;
 import com.discordsrv.sponge.DSRVSponge;
-import lombok.AllArgsConstructor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -28,10 +29,23 @@ import org.spongepowered.api.event.filter.cause.Root;
 /**
  * Achievement message listener.
  */
-@AllArgsConstructor
 public class AchievementMessageListener {
 
-    private DSRVSponge plugin;
+    private final DSRVSponge plugin;
+
+    /**
+     * Configured constructor.
+     *
+     * @param plugin DSRVSponge
+     * @param enabled enabled config option
+     */
+    @Configured
+    public AchievementMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {
+        this.plugin = plugin;
+        if (enabled) {
+            plugin.getContext().getGame().getEventManager().registerListeners(plugin, this);
+        }
+    }
 
     /**
      * GrantAchievementEvent.TargetPlayer listener caused by a Player.

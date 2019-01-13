@@ -20,10 +20,7 @@ package com.discordsrv.sponge;
 import com.discordsrv.core.api.dsrv.platform.Platform;
 import com.discordsrv.core.channel.LocalChatChannelLinker;
 import com.discordsrv.core.conf.Configuration;
-import com.discordsrv.sponge.listener.ChannelMessageListener;
-import com.discordsrv.sponge.listener.ChatMessageListener;
-import com.discordsrv.sponge.listener.DeathMessageListener;
-import com.discordsrv.sponge.listener.JoinLeaveMessageListener;
+import com.discordsrv.sponge.listener.*;
 import com.discordsrv.sponge.unit.chat.SpongeChat;
 import com.discordsrv.sponge.unit.chat.SpongeGlobalChat;
 import com.google.common.util.concurrent.FutureCallback;
@@ -104,7 +101,12 @@ public class DSRVSponge implements Platform<SpongeContext> {
             Map<String, String> mappings = new HashMap<>();
             mappings.put("plugin", SpongeContext.class.getName());
             mappings.put("channels", LocalChatChannelLinker.class.getName());
-            mappings.put("generic-message-listener", ChannelMessageListener.class.getName());
+            mappings.put("chat_message_listener", ChatMessageListener.class.getName());
+            mappings.put("join_leave_message_listener", JoinLeaveMessageListener.class.getName());
+            mappings.put("death_message_listener", DeathMessageListener.class.getName());
+            mappings.put("achievement_message_listener", AchievementMessageListener.class.getName());
+            mappings.put("advancement_message_listener", AdvancementMessageListener.class.getName());
+            mappings.put("generic_message_listener", ChannelMessageListener.class.getName());
             configuration.applyRemapping(mappings);
             // context
             context = configuration
@@ -117,19 +119,17 @@ public class DSRVSponge implements Platform<SpongeContext> {
                 }
             });
             // listeners
-            game.getEventManager().registerListeners(this, new ChatMessageListener(this));
-            game.getEventManager().registerListeners(this, new JoinLeaveMessageListener(this));
-            game.getEventManager().registerListeners(this, new DeathMessageListener(this));
+            configuration.create(ChatMessageListener.class, this);
+            configuration.create(JoinLeaveMessageListener.class, this);
+            configuration.create(JoinLeaveMessageListener.class, this);
+            configuration.create(DeathMessageListener.class, this);
             try {
                 Class.forName("org.spongepowered.api.advancement.Advancement");
-                game.getEventManager()
-                    .registerListeners(this, new com.discordsrv.sponge.listener.AdvancementMessageListener(this));
+                configuration.create(AdvancementMessageListener.class, this);
             } catch (ClassNotFoundException ignored) {
-                game.getEventManager()
-                    .registerListeners(this, new com.discordsrv.sponge.listener.AchievementMessageListener(this));
+                configuration.create(AchievementMessageListener.class, this);
             }
-            game.getEventManager()
-                .registerListeners(this, context.getConfiguration().create(ChannelMessageListener.class, this));
+            context.getConfiguration().create(ChannelMessageListener.class, this);
         } catch (IOException | ConfigurationException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
             exception.printStackTrace();
         }
@@ -137,6 +137,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
 
     /**
      * Sends a message based on the MessageChannelEvent.
+     * TODO move to a class in the context
      *
      * @param event
      *         MessageChannelEvent
@@ -166,6 +167,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
 
     /**
      * TODO send message with formatting & stuff.
+     * TODO move to a class in the context
      *
      * @param spongeChat
      *         SpongeChat that the message came from

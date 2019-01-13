@@ -17,8 +17,9 @@
  */
 package com.discordsrv.sponge.listener;
 
+import com.discordsrv.core.conf.annotation.Configured;
+import com.discordsrv.core.conf.annotation.Val;
 import com.discordsrv.sponge.DSRVSponge;
-import lombok.AllArgsConstructor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -27,10 +28,22 @@ import org.spongepowered.api.event.entity.DestructEntityEvent;
 /**
  * Death message listener.
  */
-@AllArgsConstructor
 public class DeathMessageListener {
 
-    private DSRVSponge plugin;
+    private final DSRVSponge plugin;
+
+    /**
+     * Configured constructor.
+     *
+     * @param plugin DSRVSponge
+     */
+    @Configured
+    public DeathMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {
+        this.plugin = plugin;
+        if (enabled) {
+            plugin.getContext().getGame().getEventManager().registerListeners(plugin, this);
+        }
+    }
 
     /**
      * DestructEntityEvent.Death listener.

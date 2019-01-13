@@ -33,7 +33,7 @@ import java.util.List;
 public class ChannelMessageListener {
 
     private final DSRVSponge plugin;
-    private final boolean enabled, blacklist;
+    private final boolean blacklist;
     private final List<String> events;
 
     /**
@@ -49,12 +49,14 @@ public class ChannelMessageListener {
      *         events config option
      */
     @Configured
-    public ChannelMessageListener(@Val("plugin") DSRVSponge plugin, @Val("enabled") boolean enabled,
-                                  @Val("blacklist") boolean blacklist, @Val("events") List<String> events) {
+    public ChannelMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("blacklist") boolean blacklist,
+                                  final @Val("events") List<String> events, final @Val("enabled") boolean enabled) {
         this.plugin = plugin;
-        this.enabled = enabled;
         this.blacklist = blacklist;
         this.events = events;
+        if (enabled) {
+            plugin.getContext().getGame().getEventManager().registerListeners(plugin, this);
+        }
     }
 
     /**
@@ -65,8 +67,7 @@ public class ChannelMessageListener {
      */
     @Listener(order = Order.POST)
     public void onMessage(MessageChannelEvent event) {
-        if (!enabled
-            || events.stream().anyMatch(eventClass -> event.getClass().getName().startsWith(eventClass)) == blacklist) {
+        if (events.stream().anyMatch(eventClass -> event.getClass().getName().startsWith(eventClass)) == blacklist) {
             return;
         }
         plugin.sendMessage(event, null);
