@@ -35,7 +35,8 @@ public class DeathMessageListener {
     /**
      * Configured constructor.
      *
-     * @param plugin DSRVSponge
+     * @param plugin
+     *         DSRVSponge
      */
     @Configured
     public DeathMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {

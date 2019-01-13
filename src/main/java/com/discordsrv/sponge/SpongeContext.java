@@ -121,6 +121,7 @@ public class SpongeContext implements Context {
      * Fetches the event handler of this DSRVContext.
      *
      * @return eventHandler The event handler.
+     *
      * @deprecated Use {@link #getSyncExecutor()} or {@link #getAsyncExecutor()}
      */
     @Override

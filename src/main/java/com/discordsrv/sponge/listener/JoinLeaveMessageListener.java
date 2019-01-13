@@ -37,16 +37,17 @@ public class JoinLeaveMessageListener {
     /**
      * Configured constructor.
      *
-     * @param plugin DSRVSponge
-     * @param joinEnabled joinEnabled config option
-     * @param leaveEnabled leaveEnabled config option
+     * @param plugin
+     *         DSRVSponge
+     * @param joinEnabled
+     *         joinEnabled config option
+     * @param leaveEnabled
+     *         leaveEnabled config option
      */
     @Configured
-    public JoinLeaveMessageListener(
-        final @Val("plugin") DSRVSponge plugin,
-        final @Val("join_enabled") boolean joinEnabled,
-        final @Val("leave_enabled") boolean leaveEnabled
-    ) {
+    public JoinLeaveMessageListener(final @Val("plugin") DSRVSponge plugin,
+                                    final @Val("join_enabled") boolean joinEnabled,
+                                    final @Val("leave_enabled") boolean leaveEnabled) {
         this.plugin = plugin;
         this.joinEnabled = joinEnabled;
         this.leaveEnabled = leaveEnabled;

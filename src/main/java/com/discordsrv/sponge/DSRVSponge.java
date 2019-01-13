@@ -136,8 +136,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     }
 
     /**
-     * Sends a message based on the MessageChannelEvent.
-     * TODO move to a class in the context
+     * Sends a message based on the MessageChannelEvent. TODO move to a class in the context
      *
      * @param event
      *         MessageChannelEvent
@@ -166,8 +165,7 @@ public class DSRVSponge implements Platform<SpongeContext> {
     }
 
     /**
-     * TODO send message with formatting & stuff.
-     * TODO move to a class in the context
+     * TODO send message with formatting & stuff. TODO move to a class in the context
      *
      * @param spongeChat
      *         SpongeChat that the message came from

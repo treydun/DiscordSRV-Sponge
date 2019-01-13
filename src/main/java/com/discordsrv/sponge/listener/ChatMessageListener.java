@@ -36,8 +36,10 @@ public class ChatMessageListener {
     /**
      * Configured constructor.
      *
-     * @param plugin DSRVSponge
-     * @param enabled enabled config option
+     * @param plugin
+     *         DSRVSponge
+     * @param enabled
+     *         enabled config option
      */
     @Configured
     public ChatMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {

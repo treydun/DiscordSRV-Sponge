@@ -36,8 +36,10 @@ public class AchievementMessageListener {
     /**
      * Configured constructor.
      *
-     * @param plugin DSRVSponge
-     * @param enabled enabled config option
+     * @param plugin
+     *         DSRVSponge
+     * @param enabled
+     *         enabled config option
      */
     @Configured
     public AchievementMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {

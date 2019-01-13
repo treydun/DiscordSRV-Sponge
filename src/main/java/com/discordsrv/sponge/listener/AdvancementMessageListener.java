@@ -34,8 +34,10 @@ public class AdvancementMessageListener {
     /**
      * Configured constructor.
      *
-     * @param plugin DSRVSponge
-     * @param enabled enabled config option
+     * @param plugin
+     *         DSRVSponge
+     * @param enabled
+     *         enabled config option
      */
     @Configured
     public AdvancementMessageListener(final @Val("plugin") DSRVSponge plugin, final @Val("enabled") boolean enabled) {
